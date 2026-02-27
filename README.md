@@ -1,40 +1,40 @@
 > [!IMPORTANT]
-> **Este proyecto está en constante evolución. Estamos comprometidos en ofrecer a nuestra comunidad un Bot increíble. Te invitamos a instalarlo y para estar al tanto de todas las novedades. [¡Únete a nuestro nuevo canal!](https://whatsapp.com/channel/0029Vb64nWqLo4hb8cuxe23n)**
+> **Este projeto está em constante evolução. Estamos comprometidos em oferecer à nossa comunidade um Bot incrível. Te convidamos a instalá-lo para ficar por dentro de todas as novidades. [¡Únete a nuestro nuevo canal!](https://whatsapp.com/channel/0029Vb64nWqLo4hb8cuxe23n)**
 
 <p align="center"> 
 <img src="https://cdn2.sockywa.xyz/b1sSs.jpeg" alt="YukiBot-MD" style="width: 75%; height: auto; max-width: 100px;">
 
 <p align="center"> 
-<a href="#"><img title="YukiBot-MD" src="https://img.shields.io/badge/¡Disfruta de un Bot totalmente gratuito, con múltiples funciones y de código abierto! -purple?colorA=%239b33b0&colorB=%231c007b&style=for-the-badge"></a> 
+<a href="#"><img title="YukiBot-MD" src="https://img.shields.io/badge/ desfrute de um bot totalmente gratuito, com múltiplas funções de código aberto! -purple?colorA=%239b33b0&colorB=%231c007b&style=for-the-badge"></a> 
 </p>
 
 ---
 
-## 🪾 Descripción 
+## 🪾 descrição 
 
-Yuki Bot es un bot de WhatsApp multifuncional basado en `baileys`. Este bot ofrece una variedad de características para mejorar tu experiencia en WhatsApp.
+Yuki Bot é um bot multifuncional para WhatsApp baseado em Baileys. Esse bot oferece várias funcionalidades para melhorar sua experiência no WhatsApp.
 
 ---
 
 ## 🥦 Características
 
-- Comandos Gacha (Y más juegos)
+- Comandos Gacha (e mais jogos)
 - Comandos de economia
-- Respuestas automáticas
-- Gestión de grupos
-- Integración con APIs externas
+- Respostas automáticas 
+- Gerenciamento de grupos
+- Integração com APIs externas 
 
 ---
 
-## Información Importante
+## Informação importante 
 
-Evita completamente usar forks, mods o versiones alteradas de Baileys.
-No utilices “baileys mods” ni variantes no oficiales.
-Siempre usa la librería principal y oficial de Baileys.
+Evite completamente usar forks, mods ou versões alteradas do Baileys.
+Não utilize “baileys mods” nem variantes não oficiais.
+Sempre use a biblioteca principal e oficial do Baileys.
 
 ---
 
-### Instalaciónes Básicas
+### Instalações Básicas
 
 <details>
 <summary><strong>🍒 Cloud</strong> — Shell</summary>
@@ -91,19 +91,19 @@ npm install
 npm start
 ```
 
-> *Si aparece **(Y/I/N/O/D/Z) [default=N] ?** use la letra **"y"** y luego **"ENTER"** para continuar con la instalación.*
+> Se aparecer (Y/I/N/O/D/Z) [default=N] ? use a letra "y" e depois pressione ENTER para continuar com a instalação.
 
 </details>
 
 <details>
 <summary><strong>🍒 Comandos para tener mas tiempo activo</strong> — el Bot</summary>
 
-> *Ejecutar estos comandos dentro de la carpeta YukiBot-MD*
+> *executar esses comandos dentro da pasta da YukiBot-MD*
 ```bash
 termux-wake-lock && npm i -g pm2 && pm2 start index.js && pm2 save && pm2 logs 
 ``` 
 
-#### Opciones Disponibles
+#### Opções Disponíveis 
 > *Esto eliminará todo el historial que hayas establecido con PM2:*
 ```bash 
 pm2 delete index
@@ -133,7 +133,7 @@ cd && cd YukiBot-MD && npm start
 ```
 ---
 
-### Obtener nuevo inicio de Sessión 
+### Obter Nova sessão no termux 
 > *Detén el bot, haz click en el símbolo (ctrl) [default=z] usar la letra "z" + "ENTER" hasta que salga algo verdes similar a: `YukiBot-MD $`*
  
 ```bash 
@@ -143,7 +143,7 @@ cd && cd YukiBot-MD && rm -rf Sessions/Owner && npm start
 
 ---
 
-### Patrocinadores del Proyecto
+### Patrocinadores Do Projeto 
 
 <details>
 <summary><strong>☁️ Stellar</strong> — API</summary>
