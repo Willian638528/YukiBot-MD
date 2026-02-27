@@ -1,188 +1,209 @@
 import fetch from 'node-fetch';
 import { resolveLidToRealJid } from "../../lib/utils.js"
 
+// Legendas para cada ação (captions)
 const captions = {
-  peek: (from, to, genero) => from === to ? 'está espiando detrás de una puerta por diversión.' : `está espiando a`,
-  comfort: (from, to) => (from === to ? 'se está consolando a sí mismo.' : 'está consolando a'),
-  thinkhard: (from, to) => from === to ? 'se quedó pensando muy intensamente.' : 'está pensando profundamente en',
-  curious: (from, to) => from === to ? 'se muestra curioso por todo.' : 'está curioso por lo que hace',
-  sniff: (from, to) => from === to ? 'se olfatea como si buscara algo raro.' : 'está olfateando a',
-  stare: (from, to) => from === to ? 'se queda mirando al techo sin razón.' : 'se queda mirando fijamente a',
-  trip: (from, to) => from === to ? 'se tropezó consigo mismo, otra vez.' : 'tropezó accidentalmente con',
-  blowkiss: (from, to) => (from === to ? 'se manda un beso al espejo.' : 'le lanzó un beso a'),
-  snuggle: (from, to) => from === to ? 'se acurruca con una almohada suave.' : 'se acurruca dulcemente con',
-  sleep: (from, to, genero) => from === to ? 'está durmiendo plácidamente.' : 'está durmiendo con',
-  cold: (from, to, genero) => (from === to ? 'tiene mucho frío.' : 'se congela por el frío de'),
-  sing: (from, to, genero) => (from === to ? 'está cantando.' : 'le está cantando a'),
-  tickle: (from, to, genero) => from === to ? 'se está haciendo cosquillas.' : 'le está haciendo cosquillas a',
-  scream: (from, to, genero) => (from === to ? 'está gritando al viento.' : 'le está gritando a'),
-  push: (from, to, genero) => (from === to ? 'se empujó a sí mismo.' : 'empujó a'),
-  nope: (from, to, genero) => (from === to ? 'expresa claramente su desacuerdo.' : 'dice “¡No!” a'),
-  jump: (from, to, genero) => (from === to ? 'salta de felicidad.' : 'salta feliz con'),
-  heat: (from, to, genero) => (from === to ? 'siente mucho calor.' : 'tiene calor por'),
-  gaming: (from, to, genero) => (from === to ? 'está jugando solo.' : 'está jugando con'),
-  draw: (from, to, genero) => (from === to ? 'hace un lindo dibujo.' : 'dibuja inspirado en'),
-  call: (from, to, genero) => from === to ? 'marca su propio número esperando respuesta.' : 'llamó al número de',
-  seduce: (from, to, genero) => from === to ? 'lanzó una mirada seductora al vacío.' : 'está intentando seducir a',
-  shy: (from, to, genero) => from === to ? `se sonrojó tímidamente y desvió la mirada.` : `se siente demasiado ${genero === 'Hombre' ? 'tímido' : genero === 'Mujer' ? 'tímida' : 'tímide'} para mirar a`,
-  slap: (from, to, genero) => from === to ? `se dio una bofetada a sí ${genero === 'Hombre' ? 'mismo' : genero === 'Mujer' ? 'misma' : 'mismx'}.` : 'le dio una bofetada a',
-  bath: (from, to) => (from === to ? 'se está bañando.' : 'está bañando a'),
-  angry: (from, to, genero) => from === to ? `está muy ${genero === 'Hombre' ? 'enojado' : genero === 'Mujer' ? 'enojada' : 'enojadx'}.` : `está super ${genero === 'Hombre' ? 'enojado' : genero === 'Mujer' ? 'enojada' : 'enojadx'} con`,
-  bored: (from, to, genero) => from === to ? `está muy ${genero === 'Hombre' ? 'aburrido' : genero === 'Mujer' ? 'aburrida' : 'aburridx'}.` : `está ${genero === 'Hombre' ? 'aburrido' : genero === 'Mujer' ? 'aburrida' : 'aburridx'} de`,
-  bite: (from, to, genero) => from === to ? `se mordió ${genero === 'Hombre' ? 'solito' : genero === 'Mujer' ? 'solita' : 'solitx'}.` : 'mordió a',
-  bleh: (from, to) => from === to ? 'se sacó la lengua frente al espejo.' : 'le está haciendo muecas con la lengua a',
-  bonk: (from, to, genero) => from === to ? `se dio un bonk a sí ${genero === 'Hombre' ? 'mismo' : genero === 'Mujer' ? 'misma' : 'mismx'}.` : 'le dio un golpe a',
-  blush: (from, to) => (from === to ? 'se sonrojó.' : 'se sonrojó por'),
-  impregnate: (from, to) => (from === to ? 'se embarazó.' : 'embarazó a'),
-  bully: (from, to, genero) => from === to ? `se hace bullying ${genero === 'Hombre' ? 'el mismo' : genero === 'Mujer' ? 'ella misma' : 'el/ella mismx'}… alguien ${genero === 'Hombre' ? 'que lo abrace' : genero === 'Mujer' ? 'que la abrace' : `que ${genero === 'Hombre' ? 'lo' : genero === 'Mujer' ? 'la' : 'lx'} ayude`}.` : 'le está haciendo bullying a',
-  cry: (from, to) => (from === to ? 'está llorando.' : 'está llorando por'),
-  happy: (from, to) => (from === to ? 'está feliz.' : 'está feliz con'),
-  coffee: (from, to) => (from === to ? 'está tomando café.' : 'está tomando café con'),
-  clap: (from, to) => (from === to ? 'está aplaudiendo por algo.' : 'está aplaudiendo por'),
-  cringe: (from, to) => (from === to ? 'siente cringe.' : 'siente cringe por'),
-  dance: (from, to) => (from === to ? 'está bailando.' : 'está bailando con'),
-  cuddle: (from, to, genero) => from === to ? `se acurrucó ${genero === 'Hombre' ? 'solo' : genero === 'Mujer' ? 'sola' : 'solx'}.` : 'se acurrucó con',
-  drunk: (from, to, genero) => from === to ? `está demasiado ${genero === 'Hombre' ? 'borracho' : genero === 'Mujer' ? 'borracha' : 'borrachx'}` : `está ${genero === 'Hombre' ? 'borracho' : genero === 'Mujer' ? 'borracha' : 'borrachx'} con`,
-  dramatic: (from, to) => from === to ? 'está haciendo un drama exagerado.' : 'le está haciendo un drama a',
-  handhold: (from, to, genero) => from === to ? `se dio la mano consigo ${genero === 'Hombre' ? 'mismo' : genero === 'Mujer' ? 'misma' : 'mismx'}.` : 'le agarró la mano a',
-  eat: (from, to) => (from === to ? 'está comiendo algo delicioso.' : 'está comiendo con'),
-  highfive: (from, to) => from === to ? 'se chocó los cinco frente al espejo.' : 'chocó los 5 con',
-  hug: (from, to, genero) => from === to ? `se abrazó a sí ${genero === 'Hombre' ? 'mismo' : genero === 'Mujer' ? 'misma' : 'mismx'}.` : 'le dio un abrazo a',
-  kill: (from, to) => (from === to ? 'se autoeliminó en modo dramático.' : 'asesinó a'),
-  kiss: (from, to) => (from === to ? 'se mandó un beso al aire.' : 'le dio un beso a'),
-  kisscheek: (from, to) => from === to ? 'se besó en la mejilla usando un espejo.' : 'le dio un beso en la mejilla a',
-  lick: (from, to) => (from === to ? 'se lamió por curiosidad.' : 'lamió a'),
-  laugh: (from, to) => (from === to ? 'se está riendo de algo.' : 'se está burlando de'),
-  pat: (from, to) => (from === to ? 'se acarició la cabeza con ternura.' : 'le dio una caricia a'),
-  love: (from, to, genero) => from === to ? `se quiere mucho a sí ${genero === 'Hombre' ? 'mismo' : genero === 'Mujer' ? 'misma' : 'mismx'}.` : 'siente atracción por',
-  pout: (from, to, genero) => from === to ? `está haciendo pucheros ${genero === 'Hombre' ? 'solo' : genero === 'Mujer' ? 'sola' : 'solx'}.` : 'está haciendo pucheros con',
-  punch: (from, to) => (from === to ? 'lanzó un puñetazo al aire.' : 'le dio un puñetazo a'),
-  run: (from, to) => (from === to ? 'está corriendo por su vida.' : 'está corriendo con'),
-  scared: (from, to, genero) => from === to ? `está ${genero === 'Hombre' ? 'asustado' : genero === 'Mujer' ? 'asustada' : 'asustxd'} por algo.` : `está ${genero === 'Hombre' ? 'asustado' : genero === 'Mujer' ? 'asustada' : 'asustxd'} por`,
-  sad: (from, to) => (from === to ? `está triste` : `está expresando su tristeza a`),
-  smoke: (from, to) => (from === to ? 'está fumando tranquilamente.' : 'está fumando con'),
-  smile: (from, to) => (from === to ? 'está sonriendo.' : 'le sonrió a'),
-  spit: (from, to, genero) => from === to ? `se escupió a sí ${genero === 'Hombre' ? 'mismo' : genero === 'Mujer' ? 'misma' : 'mismx'} por accidente.` : 'le escupió a',
-  smug: (from, to) => (from === to ? 'está presumiendo mucho últimamente.' : 'está presumiendo a'),
-  think: (from, to) => from === to ? 'está pensando profundamente.' : 'no puede dejar de pensar en',
-  step: (from, to, genero) => from === to ? `se pisó a sí ${genero === 'Hombre' ? 'mismo' : genero === 'Mujer' ? 'misma' : 'mismx'} por accidente.` : 'está pisando a',
-  wave: (from, to, genero) => from === to ? `se saludó a sí ${genero === 'Hombre' ? 'mismo' : genero === 'Mujer' ? 'misma' : 'mismx'} en el espejo.` : 'está saludando a',
-  walk: (from, to) => (from === to ? 'salió a caminar en soledad.' : 'decidió dar un paseo con'),
-  wink: (from, to, genero) => from === to ? `se guiñó a sí ${genero === 'Hombre' ? 'mismo' : genero === 'Mujer' ? 'misma' : 'mismx'} en el espejo.` : 'le guiñó a',
-  psycho: (from, to) => from === to ? 'está actuando como un psicópata.' : 'está teniendo un ataque de locura por',
-  poke: (from, to) => from === to ? 'se picó a sí mismo.' : 'le da un golpecito a',
-  cook: (from, to) => from === to ? 'está concentrado en la cocina.' : 'se divierte cocinando con',
-  lewd: (from, to) => from === to ? 'se comporta de forma provocativa.' : 'se mueve de manera seductora por',
-  greet: (from, to) => from === to ? 'extiende la mano para saludar a todos.' : 'extiende la mano para saludar a',
-  facepalm: (from, to) => from === to ? 'se frustra y se da una palmada en la cara.' : 'se da una palmada en la cara por',
+  peek: (from, to, genero) => from === to ? 'está espiando atrás de uma porta por diversão.' : 'está espiando',
+  comfort: (from, to) => (from === to ? 'está se consolando sozinho.' : 'está consolando'),
+  thinkhard: (from, to) => from === to ? 'ficou pensando muito intensamente.' : 'está pensando profundamente em',
+  curious: (from, to) => from === to ? 'está curioso com tudo.' : 'está curioso com o que',
+  sniff: (from, to) => from === to ? 'está cheirando como se procurasse algo estranho.' : 'está cheirando',
+  stare: (from, to) => from === to ? 'ficou olhando pro teto sem motivo.' : 'está encarando fixamente',
+  trip: (from, to) => from === to ? 'tropeçou em si mesmo, de novo.' : 'tropeçou acidentalmente em',
+  blowkiss: (from, to) => (from === to ? 'mandou um beijo pro espelho.' : 'mandou um beijinho pra'),
+  snuggle: (from, to) => from === to ? 'se aninhou com um travesseiro fofinho.' : 'se aninhou carinhosamente com',
+  sleep: (from, to, genero) => from === to ? 'está dormindo tranquilamente.' : 'está dormindo com',
+  cold: (from, to, genero) => (from === to ? 'está com muito frio.' : 'está congelando de frio por causa de'),
+  sing: (from, to, genero) => (from === to ? 'está cantando.' : 'está cantando pra'),
+  tickle: (from, to, genero) => from === to ? 'está fazendo cócegas em si mesmo.' : 'está fazendo cócegas em',
+  scream: (from, to, genero) => (from === to ? 'está gritando pro vento.' : 'está gritando com'),
+  push: (from, to, genero) => (from === to ? 'se empurrou sozinho.' : 'empurrou'),
+  nope: (from, to, genero) => (from === to ? 'expressa claramente sua discordância.' : 'diz “Não!” pra'),
+  jump: (from, to, genero) => (from === to ? 'pula de felicidade.' : 'pula feliz com'),
+  heat: (from, to, genero) => (from === to ? 'está sentindo muito calor.' : 'está com calor por causa de'),
+  gaming: (from, to, genero) => (from === to ? 'está jogando sozinho.' : 'está jogando com'),
+  draw: (from, to, genero) => (from === to ? 'está fazendo um desenho fofo.' : 'está desenhando inspirado em'),
+  call: (from, to, genero) => from === to ? 'ligou pro próprio número esperando resposta.' : 'ligou pro número de',
+  seduce: (from, to, genero) => from === to ? 'lançou um olhar sedutor pro vazio.' : 'está tentando seduzir',
+  shy: (from, to, genero) => from === to ? `ficou envergonhado e desviou o olhar.` : `está muito ${genero === 'Hombre' ? 'tímido' : genero === 'Mujer' ? 'tímida' : 'tímide'} pra olhar pra`,
+  slap: (from, to, genero) => from === to ? `deu um tapa na própria cara.` : 'deu um tapa em',
+  bath: (from, to) => (from === to ? 'está tomando banho.' : 'está dando banho em'),
+  angry: (from, to, genero) => from === to ? `está muito ${genero === 'Hombre' ? 'bravo' : genero === 'Mujer' ? 'brava' : 'bravx'}.` : `está super ${genero === 'Hombre' ? 'bravo' : genero === 'Mujer' ? 'brava' : 'bravx'} com`,
+  bored: (from, to, genero) => from === to ? `está muito ${genero === 'Hombre' ? 'entediado' : genero === 'Mujer' ? 'entediada' : 'entediadx'}.` : `está ${genero === 'Hombre' ? 'entediado' : genero === 'Mujer' ? 'entediada' : 'entediadx'} de`,
+  bite: (from, to, genero) => from === to ? `mordeu a si mesm${genero === 'Hombre' ? 'o' : genero === 'Mujer' ? 'a' : 'x'}.` : 'mordeu',
+  bleh: (from, to) => from === to ? 'mostrou a língua pro espelho.' : 'está fazendo careta com a língua pra',
+  bonk: (from, to, genero) => from === to ? `deu um bonk na própria cabeça.` : 'deu um bonk em',
+  blush: (from, to) => (from === to ? 'ficou corado.' : 'ficou corado por causa de'),
+  impregnate: (from, to) => (from === to ? 'se engravidou.' : 'engravidou'),
+  bully: (from, to, genero) => from === to ? `está fazendo bullying consigo mesm\( {genero === 'Hombre' ? 'o' : genero === 'Mujer' ? 'a' : 'x'}… alguém que abrace el \){genero === 'Hombre' ? 'e' : genero === 'Mujer' ? 'a' : 'x'}.` : 'está fazendo bullying com',
+  cry: (from, to) => (from === to ? 'está chorando.' : 'está chorando por causa de'),
+  happy: (from, to) => (from === to ? 'está feliz.' : 'está feliz com'),
+  coffee: (from, to) => (from === to ? 'está tomando café.' : 'está tomando café com'),
+  clap: (from, to) => (from === to ? 'está batendo palmas por algo.' : 'está batendo palmas por'),
+  cringe: (from, to) => (from === to ? 'sentiu cringe.' : 'sentiu cringe por causa de'),
+  dance: (from, to) => (from === to ? 'está dançando.' : 'está dançando com'),
+  cuddle: (from, to, genero) => from === to ? `se aninhou sozinh${genero === 'Hombre' ? 'o' : genero === 'Mujer' ? 'a' : 'x'}.` : 'se aninhou com',
+  drunk: (from, to, genero) => from === to ? `está muito ${genero === 'Hombre' ? 'bêbado' : genero === 'Mujer' ? 'bêbada' : 'bêbadx'}` : `está ${genero === 'Hombre' ? 'bêbado' : genero === 'Mujer' ? 'bêbada' : 'bêbadx'} com`,
+  dramatic: (from, to) => from === to ? 'está fazendo um drama exagerado.' : 'está fazendo drama com',
+  handhold: (from, to, genero) => from === to ? `segurou a própria mão.` : 'segurou a mão de',
+  eat: (from, to) => (from === to ? 'está comendo algo delicioso.' : 'está comendo com'),
+  highfive: (from, to) => from === to ? 'deu high-five no espelho.' : 'deu high-five com',
+  hug: (from, to, genero) => from === to ? `se abraçou sozinh${genero === 'Hombre' ? 'o' : genero === 'Mujer' ? 'a' : 'x'}.` : 'deu um abraço em',
+  kill: (from, to) => (from === to ? 'se auto-eliminou de forma dramática.' : 'matou'),
+  kiss: (from, to) => (from === to ? 'mandou um beijo pro ar.' : 'deu um beijo em'),
+  kisscheek: (from, to) => from === to ? 'beijou a própria bochecha no espelho.' : 'deu um beijo na bochecha de',
+  lick: (from, to) => (from === to ? 'se lambeu por curiosidade.' : 'lambeu'),
+  laugh: (from, to) => (from === to ? 'está rindo de algo.' : 'está rindo de'),
+  pat: (from, to) => (from === to ? 'fez carinho na própria cabeça.' : 'fez carinho em'),
+  love: (from, to, genero) => from === to ? `se ama muito a si mesm${genero === 'Hombre' ? 'o' : genero === 'Mujer' ? 'a' : 'x'}.` : 'sente atração por',
+  pout: (from, to, genero) => from === to ? `está fazendo biquinho sozinh${genero === 'Hombre' ? 'o' : genero === 'Mujer' ? 'a' : 'x'}.` : 'está fazendo biquinho com',
+  punch: (from, to) => (from === to ? 'deu um soco no ar.' : 'deu um soco em'),
+  run: (from, to) => (from === to ? 'está correndo pela vida.' : 'está correndo com'),
+  scared: (from, to, genero) => from === to ? `está ${genero === 'Hombre' ? 'assustado' : genero === 'Mujer' ? 'assustada' : 'assustadx'} com algo.` : `está ${genero === 'Hombre' ? 'assustado' : genero === 'Mujer' ? 'assustada' : 'assustadx'} por causa de`,
+  sad: (from, to) => (from === to ? 'está triste.' : 'está expressando tristeza pra'),
+  smoke: (from, to) => (from === to ? 'está fumando tranquilamente.' : 'está fumando com'),
+  smile: (from, to) => (from === to ? 'está sorrindo.' : 'sorriu pra'),
+  spit: (from, to, genero) => from === to ? `cuspiu em si mesm${genero === 'Hombre' ? 'o' : genero === 'Mujer' ? 'a' : 'x'} por acidente.` : 'cuspiu em',
+  smug: (from, to) => (from === to ? 'está se achando muito ultimamente.' : 'está se achando pra'),
+  think: (from, to) => from === to ? 'está pensando profundamente.' : 'não consegue parar de pensar em',
+  step: (from, to, genero) => from === to ? `pisou no próprio pé por acidente.` : 'está pisando em',
+  wave: (from, to, genero) => from === to ? `se acenou pra si mesm${genero === 'Hombre' ? 'o' : genero === 'Mujer' ? 'a' : 'x'} no espelho.` : 'está acenando pra',
+  walk: (from, to) => (from === to ? 'saiu pra caminhar sozinho.' : 'decidiu passear com'),
+  wink: (from, to, genero) => from === to ? `piscou pra si mesm${genero === 'Hombre' ? 'o' : genero === 'Mujer' ? 'a' : 'x'} no espelho.` : 'piscou pra',
+  psycho: (from, to) => from === to ? 'está agindo como psicopata.' : 'está tendo um surto de loucura por causa de',
+  poke: (from, to) => from === to ? 'cutucou a si mesmo.' : 'cutucou',
+  cook: (from, to) => from === to ? 'está concentrado na cozinha.' : 'está se divertindo cozinhando com',
+  lewd: (from, to) => from === to ? 'está se comportando de forma provocante.' : 'está se movendo de forma sedutora pra',
+  greet: (from, to) => from === to ? 'estende a mão pra se cumprimentar.' : 'estende a mão pra cumprimentar',
+  facepalm: (from, to) => from === to ? 'ficou frustrado e deu uma palmada na cara.' : 'deu uma palmada na cara por causa de',
 }
 
+// Símbolos fofos aleatórios
 const symbols = ['(⁠◠⁠‿⁠◕⁠)', '˃͈◡˂͈', '૮(˶ᵔᵕᵔ˶)ა', '(づ｡◕‿‿◕｡)づ', '(✿◡‿◡)', '(꒪⌓꒪)', '(✿✪‿✪｡)', '(*≧ω≦)', '(✧ω◕)', '˃ 𖥦 ˂', '(⌒‿⌒)', '(¬‿¬)', '(✧ω✧)', '✿(◕ ‿◕)✿', 'ʕ•́ᴥ•̀ʔっ', '(ㅇㅅㅇ❀)', '(∩︵∩)', '(✪ω✪)', '(✯◕‿◕✯)', '(•̀ᴗ•́)و ̑̑']
+
 function getRandomSymbol() {
   return symbols[Math.floor(Math.random() * symbols.length)]
 }
 
+// Aliases para comandos (palavras que ativam a ação)
 const alias = {
-  psycho: ['psycho', 'locura'],
-  poke: ['poke', 'picar'],
-  cook: ['cook', 'cocinar'],
-  lewd: ['lewd', 'provocativo', 'provocativa'],
-  greet: ['greet', 'saludar', 'hola', 'hi'],
-  facepalm: ['facepalm', 'palmada', 'frustracion'],
-  angry: ['angry','enojado','enojada'],
-  bleh: ['bleh'],
-  bored: ['bored','aburrido','aburrida'],
-  clap: ['clap','aplaudir'],
-  coffee: ['coffee','cafe'],
-  dramatic: ['dramatic','drama'],
-  drunk: ['drunk'],
-  cold: ['cold'],
-  impregnate: ['impregnate','preg','preñar','embarazar'],
-  kisscheek: ['kisscheek','beso','besar'],
-  laugh: ['laugh'],
-  love: ['love','amor'],
-  pout: ['pout','mueca'],
-  punch: ['punch','golpear'],
-  run: ['run','correr'],
-  sad: ['sad','triste'],
-  scared: ['scared','asustado'],
-  seduce: ['seduce','seducir'],
-  shy: ['shy','timido','timida'],
-  sleep: ['sleep','dormir'],
-  smoke: ['smoke','fumar'],
-  spit: ['spit','escupir'],
-  step: ['step','pisar'],
-  think: ['think','pensar'],
-  walk: ['walk','caminar'],
-  hug: ['hug','abrazar'],
-  kill: ['kill','matar'],
-  eat: ['eat','nom','comer'],
-  kiss: ['kiss','muak','besar'],
-  wink: ['wink','guiñar'],
-  pat: ['pat','acariciar'],
-  happy: ['happy','feliz'],
-  bully: ['bully','molestar'],
-  bite: ['bite','morder'],
-  blush: ['blush','sonrojarse'],
-  wave: ['wave','saludar'],
-  bath: ['bath','bañarse'],
-  smug: ['smug','presumir'],
-  smile: ['smile','sonreir'],
-  highfive: ['highfive','choca'],
-  handhold: ['handhold','tomar'],
-  cringe: ['cringe','mueca'],
-  bonk: ['bonk','golpe'],
-  cry: ['cry','llorar'],
-  lick: ['lick','lamer'],
-  slap: ['slap','bofetada'],
-  dance: ['dance','bailar'],
-  cuddle: ['cuddle','acurrucar'],
-  sing: ['sing','cantar'],
-  tickle: ['tickle','cosquillas'],
-  scream: ['scream','gritar'],
-  push: ['push','empujar'],
-  nope: ['nope','no'],
-  jump: ['jump','saltar'],
-  heat: ['heat','calor'],
-  gaming: ['gaming','jugar'],
-  draw: ['draw','dibujar'],
-  call: ['call','llamar'],
-  snuggle: ['snuggle','acurrucarse'],
-  blowkiss: ['blowkiss','besito'],
-  trip: ['trip','tropezar'],
-  stare: ['stare','mirar'],
-  sniff: ['sniff','oler'],
-  curious: ['curious','curioso','curiosa'],
-  thinkhard: ['thinkhard','pensar'],
-  comfort: ['comfort','consolar'],
-  peek: ['peek','mirar']
+  psycho: ['psycho', 'locura', 'louco', 'louca'],
+  poke: ['poke', 'picar', 'cutucar'],
+  cook: ['cook', 'cocinar', 'cozinhar'],
+  lewd: ['lewd', 'provocativo', 'provocativa', 'safado', 'safada'],
+  greet: ['greet', 'saludar', 'hola', 'oi', 'olá', 'hi'],
+  facepalm: ['facepalm', 'palmada', 'frustração'],
+  angry: ['angry', 'enojado', 'bravo', 'brava'],
+  bleh: ['bleh', 'lingua'],
+  bored: ['bored', 'entediado', 'entediada'],
+  clap: ['clap', 'aplaudir', 'palmas'],
+  coffee: ['coffee', 'cafe', 'café'],
+  dramatic: ['dramatic', 'drama'],
+  drunk: ['drunk', 'bebado', 'bebada'],
+  cold: ['cold', 'frio'],
+  impregnate: ['impregnate', 'preg', 'preñar', 'engravidar'],
+  kisscheek: ['kisscheek', 'beijo', 'bochecha'],
+  laugh: ['laugh', 'rir'],
+  love: ['love', 'amor'],
+  pout: ['pout', 'biquinho', 'mueca'],
+  punch: ['punch', 'soco', 'golpear'],
+  run: ['run', 'correr'],
+  sad: ['sad', 'triste'],
+  scared: ['scared', 'assustado', 'medo'],
+  seduce: ['seduce', 'seduzir'],
+  shy: ['shy', 'timido', 'timida', 'vergonha'],
+  sleep: ['sleep', 'dormir'],
+  smoke: ['smoke', 'fumar'],
+  spit: ['spit', 'cuspir'],
+  step: ['step', 'pisar'],
+  think: ['think', 'pensar'],
+  walk: ['walk', 'caminhar'],
+  hug: ['hug', 'abraçar'],
+  kill: ['kill', 'matar'],
+  eat: ['eat', 'nom', 'comer'],
+  kiss: ['kiss', 'muak', 'beijar'],
+  wink: ['wink', 'piscar'],
+  pat: ['pat', 'acariciar', 'cafuné'],
+  happy: ['happy', 'feliz'],
+  bully: ['bully', 'molestar', 'zoar'],
+  bite: ['bite', 'morder'],
+  blush: ['blush', 'corar', 'sonrojarse'],
+  wave: ['wave', 'acenar'],
+  bath: ['bath', 'banho'],
+  smug: ['smug', 'se achar'],
+  smile: ['smile', 'sorrir'],
+  highfive: ['highfive', 'chocar', 'toca aqui'],
+  handhold: ['handhold', 'segurar mão', 'dar as mãos'],
+  cringe: ['cringe', 'mueca'],
+  bonk: ['bonk', 'bonk', 'golpe'],
+  cry: ['cry', 'chorar'],
+  lick: ['lick', 'lamber'],
+  slap: ['slap', 'tapa', 'bofetada'],
+  dance: ['dance', 'dançar'],
+  cuddle: ['cuddle', 'aninhar'],
+  sing: ['sing', 'cantar'],
+  tickle: ['tickle', 'cosquillas', 'cócegas'],
+  scream: ['scream', 'gritar'],
+  push: ['push', 'empurrar'],
+  nope: ['nope', 'não'],
+  jump: ['jump', 'pular'],
+  heat: ['heat', 'calor'],
+  gaming: ['gaming', 'jogar'],
+  draw: ['draw', 'desenhar'],
+  call: ['call', 'ligar'],
+  snuggle: ['snuggle', 'aconchegar'],
+  blowkiss: ['blowkiss', 'beijinho no ar'],
+  trip: ['trip', 'tropeçar'],
+  stare: ['stare', 'encarar'],
+  sniff: ['sniff', 'cheirar'],
+  curious: ['curious', 'curioso', 'curiosa'],
+  thinkhard: ['thinkhard', 'pensar muito'],
+  comfort: ['comfort', 'consolar'],
+  peek: ['peek', 'espiar'],
 };
 
 export default {
-command: ['angry','enojado','enojada','bleh','bored','aburrido','aburrida','clap','aplaudir','coffee','cafe','dramatic','drama','drunk','cold','impregnate','preg','preñar','embarazar','kisscheek','beso','besar','laugh','love','amor','pout','mueca','punch','golpear','run','correr','sad','triste','scared','asustado','seduce','seducir','shy','timido','timida','sleep','dormir','smoke','fumar','spit','escupir','step','pisar','think','pensar','walk','caminar','hug','abrazar','kill','matar','eat','nom','comer','kiss','muak','wink','guiñar','pat','acariciar','happy','feliz','bully','molestar','bite','morder','blush','sonrojarse','wave','saludar','bath','bañarse','smug','presumir','smile','sonreir','highfive','choca','handhold','tomar','cringe','mueca','bonk','golpe','cry','llorar','lick','lamer','slap','bofetada','dance','bailar','cuddle','acurrucar','sing','cantar','tickle','cosquillas','scream','gritar','push','empujar','nope','no','jump','saltar','heat','calor','gaming','jugar','draw','dibujar','call','llamar','snuggle','acurrucarse','blowkiss','besito','trip','tropezar','stare','mirar','sniff','oler','curious','curioso','curiosa','thinkhard','pensar','comfort','consolar','peek','mirar','psycho','locura','poke','picar','cook','cocinar','lewd','provocativo','provocativa','greet','saludar','hola','hi','facepalm','palmada','frustracion'],
+  command: Object.keys(alias).flatMap(key => alias[key]), // Todos os aliases viram comandos
   category: 'anime',
   run: async (client, m, args, usedPrefix, command) => {
-    const currentCommand = Object.keys(alias).find(key => alias[key].includes(command)) || command
-    if (!captions[currentCommand]) return
-    let mentionedJid = m.mentionedJid
-    let who2 = mentionedJid.length > 0 ? mentionedJid[0] : (m.quoted ? m.quoted.sender : m.sender)
-    const who = await resolveLidToRealJid(who2, client, m.chat)
-    const fromName = global.db.data.users[m.sender]?.name || '@'+m.sender.split('@')[0]
-    const toName = global.db.data.users[who]?.name || '@'+who.split('@')[0]
-    const genero = global.db.data.users[m.sender]?.genre || 'Oculto'
-    const captionText = captions[currentCommand](fromName, toName, genero)
-    const caption = who !== m.sender ? `\`${fromName}.\` ${captionText} \`${toName}.\` ${getRandomSymbol()}.` : `\`${fromName}\` ${captionText} ${getRandomSymbol()}.`
+    // Encontra a ação principal pelo alias usado
+    const currentCommand = Object.keys(alias).find(key => alias[key].includes(command)) || command;
+    if (!captions[currentCommand]) return;
+
+    let mentionedJid = m.mentionedJid;
+    let who2 = mentionedJid.length > 0 ? mentionedJid[0] : (m.quoted ? m.quoted.sender : m.sender);
+    const who = await resolveLidToRealJid(who2, client, m.chat);
+
+    const fromName = global.db.data.users[m.sender]?.name || '@' + m.sender.split('@')[0];
+    const toName = global.db.data.users[who]?.name || '@' + who.split('@')[0];
+    const genero = global.db.data.users[m.sender]?.genre || 'Oculto';
+
+    const captionText = captions[currentCommand](fromName, toName, genero);
+    const caption = who !== m.sender 
+      ? `\`${fromName}.\` \( {captionText} \` \){toName}.\` ${getRandomSymbol()}.`
+      : `\`${fromName}\` ${captionText} ${getRandomSymbol()}.`;
+
     try {
-    const response = await fetch(`https://tenor.googleapis.com/v2/search?q=anime+${encodeURIComponent(currentCommand)}&key=AIzaSyCY8VRFGjKZ2wpAoRTQ3faV_XcwTrYL5DA&limit=20`)
-    const json = await response.json()
-    const gifs = json.results
-    if (!gifs || gifs.length === 0) throw new Error('No se encontraron resultados en ninguna API.')
-    const media = gifs[Math.floor(Math.random() * gifs.length)].media_formats
-    const url = media.mp4?.url || media.tinymp4?.url || media.loopedmp4?.url || media.gif?.url || media.tinygif?.url
-    if (!url) throw new Error('No se encontró un formato compatible en Tenor.')  
-    await client.sendMessage(m.chat, { video: { url }, gifPlayback: true, caption, mentions: [who, m.sender] }, { quoted: m })
+      const response = await fetch(`https://tenor.googleapis.com/v2/search?q=anime+${encodeURIComponent(currentCommand)}&key=AIzaSyCY8VRFGjKZ2wpAoRTQ3faV_XcwTrYL5DA&limit=20`);
+      const json = await response.json();
+      const gifs = json.results;
+
+      if (!gifs || gifs.length === 0) throw new Error('Nenhum resultado encontrado na API do Tenor.');
+
+      const media = gifs[Math.floor(Math.random() * gifs.length)].media_formats;
+      const url = media.mp4?.url || media.tinymp4?.url || media.loopedmp4?.url || media.gif?.url || media.tinygif?.url;
+
+      if (!url) throw new Error('Nenhum formato compatível encontrado no Tenor.');
+
+      await client.sendMessage(m.chat, { 
+        video: { url }, 
+        gifPlayback: true, 
+        caption, 
+        mentions: [who, m.sender] 
+      }, { quoted: m });
+
     } catch (e) {
-    await m.reply(`> An unexpected error occurred while executing command *${usedPrefix + command}*. Please try again or contact support if the issue persists.\n> [Error: *${e.message}*]`)
+      await m.reply(`> Ocorreu um erro inesperado ao executar o comando *\( {usedPrefix + command}*. Tente novamente ou contate o suporte se o problema persistir.\n> [Erro: * \){e.message}*]`);
     }
   },
 };
