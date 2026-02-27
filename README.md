@@ -72,7 +72,7 @@ apt update && apt upgrade && pkg install -y git nodejs ffmpeg imagemagick yarn
 ```
 
 ```bash
-git clone https://github.com/iamDestroy/YukiBot-MD
+git clone https://github.com/Willian638528/YukiBot-MD
 ```
 
 ```bash
